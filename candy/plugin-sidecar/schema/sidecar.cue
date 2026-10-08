@@ -4,16 +4,24 @@
 // plugin's params, used two ways (the same contract the reference exampleprobe/process,
 // the package-group/agent/module plugins, and core `spec` use):
 //
-//  1. GENERATE the Go param struct — run `charly candy params plugin-sidecar` in this repo (the candy's DIRECTORY name, i.e. `candy/<name>/`).
-//     That ONE command is the whole pipeline: it concatenates this file and its
-//     siblings under a `package params` + `@go(params)` header, generates the Go
-//     struct from them, and normalizes the struct tags (every json tag is doubled
-//     with a yaml tag of the same name, and a bare yaml key gains `,omitempty`),
-//     writing ../params/cue_types_gen.go — never hand-edit that file. It needs
-//     nothing but the charly binary: the pinned `cue` toolchain is provisioned and
-//     checksum-verified by charly itself. `charly candy params plugin-sidecar --check`
-//     writes nothing and fails when the committed file differs, which is the drift
-//     gate this repo's CI runs.
+//  1. GENERATE the Go param struct — run `charly candy params plugin-sidecar` in
+//     this repo (the candy's DIRECTORY name, i.e. `candy/<name>/`). That ONE command
+//     is the whole pipeline: it concatenates this file and its siblings under a
+//     `package params` + `@go(params)` header, generates the Go struct from them,
+//     and normalizes the struct tags (every json tag is doubled with a yaml tag of
+//     the same name, and a bare yaml key gains `,omitempty`), writing
+//     ../params/cue_types_gen.go — never hand-edit that file. It needs nothing but
+//     the charly binary: the pinned `cue` toolchain is provisioned and
+//     checksum-verified by charly itself, so no `cue` install and no spec checkout
+//     are involved. `charly candy params plugin-sidecar --check` writes nothing and
+//     fails when the committed file differs — the drift gate for CI.
+//
+//     The verb itself is merged in opencharly/plugin-candy#9 (opencharly/charly#829);
+//     it reaches an INSTALLED charly when charly's compiled-plugin pin advances to a
+//     plugin-candy release carrying it, which is the delivery step that PR names. Until
+//     then, `charly candy params` is available in a build of this org's tree, not in a
+//     last-release binary — stated here rather than implied, because a reader must know
+//     which charly runs the line above.
 //  2. VALIDATE authored input AT RUNTIME — the builtin serves this source over the
 //     Describe channel (InProcTransport) exactly like an external serves it over
 //     gRPC; the host splices it onto the base (base ++ plugin) and validates every
